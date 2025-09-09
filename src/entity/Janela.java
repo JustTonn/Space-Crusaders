@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 public class Janela {
     int tileSize = 64;
     int colunas = 20;
-    int linhas = 20;
+    int linhas = 12;
     int larguraQuadro = tileSize * colunas;
     int alturaQuadro = tileSize * linhas;
 
