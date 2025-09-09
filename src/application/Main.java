@@ -1,7 +1,9 @@
 package application;
 
+import entity.Janela;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Space Crusaders");
+        new Janela();
     }
 }
