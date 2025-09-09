@@ -36,7 +36,7 @@ public class SpaceCrusaders extends JPanel {
 
     }
 
-    Bloco nave;
+    Nave nave;
 
     SpaceCrusaders() {
         setPreferredSize(new Dimension(larguraQuadro, alturaQuadro));
