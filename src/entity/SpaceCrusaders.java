@@ -25,11 +25,17 @@ public class SpaceCrusaders extends JPanel {
         setPreferredSize(new Dimension(larguraQuadro, alturaQuadro));
         setBackground(Color.BLACK);
 
-        shipImg = new ImageIcon(getClass().getResource("./imgs/ship.png")).getImage();
-        alienImg = new ImageIcon(getClass().getResource("./imgs/alien.png")).getImage();
-        alienCyanImg = new ImageIcon(getClass().getResource("./imgs/alien-cyan.png")).getImage();
-        alienMagentaImg = new ImageIcon(getClass().getResource("./imgs/alien-magenta.png")).getImage();
-        alienYellowImg = new ImageIcon(getClass().getResource("./imgs/alien-yellow.png")).getImage();
+        shipImg = new ImageIcon(getClass().getResource("/imgs/ship.png")).getImage();
+        alienImg = new ImageIcon(getClass().getResource("/imgs/alien.png")).getImage();
+        alienCyanImg = new ImageIcon(getClass().getResource("/imgs/alien-cyan.png")).getImage();
+        alienMagentaImg = new ImageIcon(getClass().getResource("/imgs/alien-magenta.png")).getImage();
+        alienYellowImg = new ImageIcon(getClass().getResource("/imgs/alien-yellow.png")).getImage();
+
+        alienImagemArray = new ArrayList<Image>();
+        alienImagemArray.add(alienCyanImg);
+        alienImagemArray.add(alienYellowImg);
+        alienImagemArray.add(alienMagentaImg);
+        alienImagemArray.add(alienImg);
 
     }
 
