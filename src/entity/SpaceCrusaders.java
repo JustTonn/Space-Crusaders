@@ -28,8 +28,20 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
     int naveAltura = tileSize;
     int naveY = (alturaQuadro / 2) - (naveAltura / 2);
     int naveLargura = tileSize * 2;
-    int naveVelocidadeY = tileSize;
+    int naveVelocidadeY = 3;
 
+    //Inimigos
+
+    ArrayList<Bloco> aliens;
+    int alienAltura = tileSize;
+    int alienLargura = tileSize;
+    int alienX = 1280 - tileSize;
+    int alienY = tileSize;
+
+    int alienLinha = 3;
+    int alienColunas = 1;
+    int aliensDerrotados = 0;
+    int pontosAlien = 1;
 
     public class Nave extends Bloco {
         public Nave(int x, int y, int largura, int altura, Image img) {
@@ -61,9 +73,11 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
         alienImagemArray.add(alienImg);
 
         nave = new Nave(naveX, naveY, naveLargura, naveAltura, naveImg);
+        aliens = new ArrayList<Bloco>();
 
         //Temporizador do jogo
         gameloop = new Timer(1000/60,this);
+        criaAliens();
         gameloop.start();
     }
 
@@ -74,7 +88,30 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
     }
 
     public void draw(Graphics g) {
+
+        //nave
         g.drawImage(nave.img, nave.x, nave.y, nave.largura, nave.altura, null);
+
+        // inimigos
+        for(int i = 0; i<aliens.size();i++){
+            Bloco alien = aliens.get(i);
+            if(alien.vivo){
+                g.drawImage(alien.img,alien.x,alien.y,alien.largura,alien.altura,null);
+            }
+        }
+    }
+
+    public void criaAliens(){
+        Random random = new Random();
+
+        for(int l = 0; l< alienLinha; l++){
+            for (int c = 0;c<alienColunas;c++){
+                int indiceAleatorio = random.nextInt(alienImagemArray.size()); //um índice aleatório de uma imagem de alien.
+                Bloco alien = new Bloco(alienX + c*alienLargura,alienY + l*alienAltura,alienLargura,alienAltura,alienImagemArray.get(indiceAleatorio));
+                aliens.add(alien);
+            }
+        }
+        aliensDerrotados = aliens.size();
     }
 
     @Override
@@ -89,17 +126,17 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
     @Override
     public void keyPressed(KeyEvent e) {
-
+        if(e.getKeyCode() == KeyEvent.VK_UP && nave.y - naveVelocidadeY >= 0){
+            nave.y -= 3; // move para cima.
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_DOWN && nave.y + naveVelocidadeY <= alturaQuadro) {
+            nave.y += 3; //move para baixo.
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_UP){
-            nave.y -= naveVelocidadeY; // move um bloco para cima.
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            nave.y += naveVelocidadeY; //move um bloco para baixo.
-        }
+
     }
 
 }
