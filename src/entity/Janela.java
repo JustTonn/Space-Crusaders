@@ -19,6 +19,7 @@ public class Janela {
         SpaceCrusaders spaceCrusaders = new SpaceCrusaders();
         frame.add(spaceCrusaders);
         frame.pack();
+        spaceCrusaders.requestFocus();
         frame.setVisible(true);
 
     }
