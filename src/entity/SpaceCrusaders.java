@@ -94,6 +94,15 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
             Bloco alien = aliens.get(i);
             if (alien.vivo){
                 alien.y += alienVelocidadeY;
+                if(alien.y + alienAltura >= alturaQuadro || alien.y <= 0){
+                    alienVelocidadeY *= -1;
+                    alien.y += alienVelocidadeY*2;
+
+                    // avança o alien pra cima da nave
+                    for(int j = 0; j<aliens.size();j++){
+                        aliens.get(j).x -= alienLargura;
+                    }
+                }
             }
         }
     }
@@ -136,19 +145,70 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
     }
 
+    //movimentação da nave
+
+    boolean cima = false;
+    boolean baixo = false;
+    boolean esquerda = false;
+    boolean direta = false;
+
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_UP && nave.y - naveVelocidadeY >= 0){
+
+        if (e.getKeyCode() == KeyEvent.VK_UP){
+            cima = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_DOWN){
+            baixo = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+            direta = true;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_LEFT){
+            esquerda = true;
+        }
+
+        if (cima && nave.y - naveVelocidadeY >= 0){
             nave.y -= 3; // move para cima.
+            if (direta){
+                nave.x += 3;
+            }
+            if (esquerda){
+                nave.x -= 3;
+            }
         }
-        else if (e.getKeyCode() == KeyEvent.VK_DOWN && nave.y + naveVelocidadeY <= alturaQuadro) {
-            nave.y += 3; //move para baixo.
+        if (baixo && nave.y + naveVelocidadeY <= alturaQuadro){
+            nave.y += 3; // move para cima.
+            if (direta){
+                nave.x += 3;
+            }
+            if (esquerda){
+                nave.x -= 3;
+            }
         }
+        if (direta  && nave.x + naveVelocidadeY >= 0){
+            nave.x += 3;
+        }
+        if (esquerda && nave.x - naveVelocidadeY >= 0){
+            nave.x -= 3;
+        }
+
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+        if (e.getKeyCode() == KeyEvent.VK_UP){
+            cima = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_DOWN){
+            baixo = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+            direta = false;
+        }
+        if (e.getKeyCode() == KeyEvent.VK_LEFT){
+            esquerda = false;
+        }
     }
 
 }
