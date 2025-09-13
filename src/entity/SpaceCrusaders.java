@@ -11,7 +11,7 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
     int tileSize = 64; //tamanho de cada quadradinho da tela.
     int colunas = 20; //quantos quadradinhos tem na vertical.
-    int linhas = 12; //quantos quadradinhos tem na horizontal
+    int linhas = 10; //quantos quadradinhos tem na horizontal
     int larguraQuadro = tileSize * colunas;
     int alturaQuadro = tileSize * linhas;
 
@@ -170,23 +170,23 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
         if (cima && nave.y - naveVelocidadeY >= 0){
             nave.y -= 3; // move para cima.
-            if (direta){
+            if (direta && nave.x + nave.largura + naveVelocidadeY <= larguraQuadro){
                 nave.x += 3;
             }
-            if (esquerda){
+            if (esquerda && nave.x - naveVelocidadeY >= 0){
                 nave.x -= 3;
             }
         }
-        if (baixo && nave.y + naveVelocidadeY <= alturaQuadro){
-            nave.y += 3; // move para cima.
-            if (direta){
+        if (baixo && nave.y + nave.altura + naveVelocidadeY <= alturaQuadro){
+            nave.y += 3; // move para baixo.
+            if (direta && nave.x + nave.largura + naveVelocidadeY <= larguraQuadro){
                 nave.x += 3;
             }
-            if (esquerda){
+            if (esquerda && nave.x - naveVelocidadeY >= 0){
                 nave.x -= 3;
             }
         }
-        if (direta  && nave.x + naveVelocidadeY >= 0){
+        if (direta  && nave.x + nave.largura + naveVelocidadeY <= larguraQuadro){
             nave.x += 3;
         }
         if (esquerda && nave.x - naveVelocidadeY >= 0){
