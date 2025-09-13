@@ -42,6 +42,7 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
     int alienColunas = 1;
     int aliensDerrotados = 0;
     int pontosAlien = 1;
+    int alienVelocidadeY = 1;
 
     public class Nave extends Bloco {
         public Nave(int x, int y, int largura, int altura, Image img) {
@@ -87,12 +88,22 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
     }
 
+    public void movimento(){
+        // aliens
+        for(int i = 0; i<aliens.size();i++){
+            Bloco alien = aliens.get(i);
+            if (alien.vivo){
+                alien.y += alienVelocidadeY;
+            }
+        }
+    }
+
     public void draw(Graphics g) {
 
-        //nave
+        // Desenha a nave
         g.drawImage(nave.img, nave.x, nave.y, nave.largura, nave.altura, null);
 
-        // inimigos
+        // Desenha os inimigos
         for(int i = 0; i<aliens.size();i++){
             Bloco alien = aliens.get(i);
             if(alien.vivo){
@@ -116,6 +127,7 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        movimento();
         repaint();
     }
 
