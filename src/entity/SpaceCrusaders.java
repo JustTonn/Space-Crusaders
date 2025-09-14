@@ -9,6 +9,8 @@ import javax.swing.*;
 
 public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListener{
 
+    private EstadoDoJogo estado = EstadoDoJogo.JOGANDO; //gerencia o estado do jogo.
+
     int tileSize = 64; //tamanho de cada quadradinho da tela.
     int colunas = 20; //quantos quadradinhos tem na vertical.
     int linhas = 10; //quantos quadradinhos tem na horizontal
@@ -52,6 +54,9 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
     }
 
     Nave nave;
+
+    //tiros
+
 
     Timer gameloop;
 
