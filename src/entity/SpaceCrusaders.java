@@ -111,6 +111,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                     alien.x -= alienVelocidadeY;
                 }
             }
+
         }
     }
 
@@ -136,9 +137,10 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             int espacamentoVertical = 30;
             for (int c = 0; c < alienColunas; c++) {
                 int indiceAleatorio = random.nextInt(alienImagemArray.size()); // um índice aleatório de uma imagem de
-                                                                               // // // alien.
+                int posY = alienY + l * (alienAltura + espacamentoVertical) + random.nextInt(40);
+                // // // alien.
                 Alien alien = new Alien(alienX + c * (alienLargura + espacamentoHorizontal),
-                        alienY + l * (alienAltura + espacamentoVertical),
+                        posY,
                         alienLargura, alienAltura,
                         alienImagemArray.get(indiceAleatorio));
                 aliens.add(alien);
