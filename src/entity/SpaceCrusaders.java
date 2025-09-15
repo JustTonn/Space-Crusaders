@@ -7,18 +7,18 @@ import java.util.Random;
 
 import javax.swing.*;
 
-public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListener{
+public class SpaceCrusaders extends JPanel implements ActionListener, KeyListener {
 
-    private EstadoDoJogo estado = EstadoDoJogo.JOGANDO; //gerencia o estado do jogo.
+    private EstadoDoJogo estado = EstadoDoJogo.JOGANDO; // gerencia o estado do jogo.
 
-    int tileSize = 64; //tamanho de cada quadradinho da tela.
-    int colunas = 20; //quantos quadradinhos tem na vertical.
-    int linhas = 10; //quantos quadradinhos tem na horizontal
+    int tileSize = 64; // tamanho de cada quadradinho da tela.
+    int colunas = 20; // quantos quadradinhos tem na vertical.
+    int linhas = 10; // quantos quadradinhos tem na horizontal
     int larguraQuadro = tileSize * colunas;
     int alturaQuadro = tileSize * linhas;
 
-    Image naveImg; //sprite da nave.
-    Image alienImg; //sprite dos inimigos.
+    Image naveImg; // sprite da nave.
+    Image alienImg; // sprite dos inimigos.
     Image alienCyanImg;
     Image alienMagentaImg;
     Image alienYellowImg;
@@ -32,9 +32,9 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
     int naveLargura = tileSize * 2;
     int naveVelocidadeY = 3;
 
-    //Inimigos
+    // Inimigos
 
-    ArrayList<Bloco> aliens;
+    ArrayList<Alien> aliens;
     int alienAltura = tileSize;
     int alienLargura = tileSize;
     int alienX = 1280 - tileSize;
@@ -53,18 +53,24 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
     }
 
+    public class Alien extends Bloco {
+        public Alien(int x, int y, int largura, int altura, Image img) {
+            super(x, y, largura, altura, img);
+        }
+
+    }
+
     Nave nave;
 
-    //tiros
-
+    // tiros
 
     Timer gameloop;
 
     SpaceCrusaders() {
         setPreferredSize(new Dimension(larguraQuadro, alturaQuadro));
         setBackground(Color.BLACK);
-        setFocusable(true); //foca na tela do jogo
-        addKeyListener(this); //pega o evento das teclas
+        setFocusable(true); // foca na tela do jogo
+        addKeyListener(this); // pega o evento das teclas
 
         naveImg = new ImageIcon(getClass().getResource("/imgs/ship.png")).getImage();
         alienImg = new ImageIcon(getClass().getResource("/imgs/alien.png")).getImage();
@@ -79,10 +85,10 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
         alienImagemArray.add(alienImg);
 
         nave = new Nave(naveX, naveY, naveLargura, naveAltura, naveImg);
-        aliens = new ArrayList<Bloco>();
+        aliens = new ArrayList<Alien>();
 
-        //Temporizador do jogo
-        gameloop = new Timer(1000/60,this);
+        // Temporizador do jogo
+        gameloop = new Timer(1000 / 60, this);
         criaAliens();
         gameloop.start();
     }
@@ -93,20 +99,16 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
     }
 
-    public void movimento(){
+    public void movimento() {
         // aliens
-        for(int i = 0; i<aliens.size();i++){
-            Bloco alien = aliens.get(i);
-            if (alien.vivo){
-                alien.y += alienVelocidadeY;
-                if(alien.y + alienAltura >= alturaQuadro || alien.y <= 0){
-                    alienVelocidadeY *= -1;
-                    alien.y += alienVelocidadeY*2;
-
-                    // avança o alien pra cima da nave
-                    for(int j = 0; j<aliens.size();j++){
-                        aliens.get(j).x -= alienLargura;
-                    }
+        for (int i = 0; i < aliens.size(); i++) {
+            Alien alien = aliens.get(i);
+            if (alien.vivo) {
+                // Movimento horizontal em direção à nave
+                if (alien.x < nave.x) {
+                    alien.x += alienVelocidadeY;
+                } else if (alien.x > nave.x) {
+                    alien.x -= alienVelocidadeY;
                 }
             }
         }
@@ -118,21 +120,27 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
         g.drawImage(nave.img, nave.x, nave.y, nave.largura, nave.altura, null);
 
         // Desenha os inimigos
-        for(int i = 0; i<aliens.size();i++){
-            Bloco alien = aliens.get(i);
-            if(alien.vivo){
-                g.drawImage(alien.img,alien.x,alien.y,alien.largura,alien.altura,null);
+        for (int i = 0; i < aliens.size(); i++) {
+            Alien alien = aliens.get(i);
+            if (alien.vivo) {
+                g.drawImage(alien.img, alien.x, alien.y, alien.largura, alien.altura, null);
             }
         }
     }
 
-    public void criaAliens(){
+    public void criaAliens() {
         Random random = new Random();
 
-        for(int l = 0; l< alienLinha; l++){
-            for (int c = 0;c<alienColunas;c++){
-                int indiceAleatorio = random.nextInt(alienImagemArray.size()); //um índice aleatório de uma imagem de alien.
-                Bloco alien = new Bloco(alienX + c*alienLargura,alienY + l*alienAltura,alienLargura,alienAltura,alienImagemArray.get(indiceAleatorio));
+        for (int l = 0; l < alienLinha; l++) {
+            int espacamentoHorizontal = 50;
+            int espacamentoVertical = 30;
+            for (int c = 0; c < alienColunas; c++) {
+                int indiceAleatorio = random.nextInt(alienImagemArray.size()); // um índice aleatório de uma imagem de
+                                                                               // // // alien.
+                Alien alien = new Alien(alienX + c * (alienLargura + espacamentoHorizontal),
+                        alienY + l * (alienAltura + espacamentoVertical),
+                        alienLargura, alienAltura,
+                        alienImagemArray.get(indiceAleatorio));
                 aliens.add(alien);
             }
         }
@@ -150,7 +158,7 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
     }
 
-    //movimentação da nave
+    // movimentação da nave
 
     boolean cima = false;
     boolean baixo = false;
@@ -160,41 +168,41 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
     @Override
     public void keyPressed(KeyEvent e) {
 
-        if (e.getKeyCode() == KeyEvent.VK_UP){
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
             cima = true;
         }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN){
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             baixo = true;
         }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             direta = true;
         }
-        if (e.getKeyCode() == KeyEvent.VK_LEFT){
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             esquerda = true;
         }
 
-        if (cima && nave.y - naveVelocidadeY >= 0){
+        if (cima && nave.y - naveVelocidadeY >= 0) {
             nave.y -= 3; // move para cima.
-            if (direta && nave.x + nave.largura + naveVelocidadeY <= larguraQuadro){
+            if (direta && nave.x + nave.largura + naveVelocidadeY <= larguraQuadro) {
                 nave.x += 3;
             }
-            if (esquerda && nave.x - naveVelocidadeY >= 0){
+            if (esquerda && nave.x - naveVelocidadeY >= 0) {
                 nave.x -= 3;
             }
         }
-        if (baixo && nave.y + nave.altura + naveVelocidadeY <= alturaQuadro){
+        if (baixo && nave.y + nave.altura + naveVelocidadeY <= alturaQuadro) {
             nave.y += 3; // move para baixo.
-            if (direta && nave.x + nave.largura + naveVelocidadeY <= larguraQuadro){
+            if (direta && nave.x + nave.largura + naveVelocidadeY <= larguraQuadro) {
                 nave.x += 3;
             }
-            if (esquerda && nave.x - naveVelocidadeY >= 0){
+            if (esquerda && nave.x - naveVelocidadeY >= 0) {
                 nave.x -= 3;
             }
         }
-        if (direta  && nave.x + nave.largura + naveVelocidadeY <= larguraQuadro){
+        if (direta && nave.x + nave.largura + naveVelocidadeY <= larguraQuadro) {
             nave.x += 3;
         }
-        if (esquerda && nave.x - naveVelocidadeY >= 0){
+        if (esquerda && nave.x - naveVelocidadeY >= 0) {
             nave.x -= 3;
         }
 
@@ -202,16 +210,16 @@ public class SpaceCrusaders extends JPanel implements  ActionListener, KeyListen
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_UP){
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
             cima = false;
         }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN){
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             baixo = false;
         }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             direta = false;
         }
-        if (e.getKeyCode() == KeyEvent.VK_LEFT){
+        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             esquerda = false;
         }
     }
