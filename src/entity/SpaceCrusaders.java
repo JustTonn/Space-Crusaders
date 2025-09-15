@@ -42,7 +42,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     int alienLinha = 3;
     int alienColunas = 1;
-    int aliensDerrotados = 0;
+    int aliensContador;
     int pontosAlien = 1;
     int alienVelocidadeY = 1;
 
@@ -170,10 +170,35 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
         }
 
-        // bala
+        // bala tiros
         for (int i = 0; i < balaArray.size(); i++) {
             Bala bala = balaArray.get(i);
             bala.x += balaVelocidadeX;
+
+            // colisao dos tiros com os aliens
+            for (int j = 0; j < aliens.size(); j++) {
+                Alien alien = aliens.get(j);
+                if (!bala.used && alien.vivo && detectarColisao(bala, alien)) {
+                    bala.used = true;
+                    alien.vivo = false;
+                    aliensContador--;
+
+                }
+            }
+
+        }
+        // limpar as balas usadas
+        while (balaArray.size() > 0 && (balaArray.get(0).used || balaArray.get(0).y < 0)) {
+            balaArray.remove(0);
+        }
+
+        // nova horda
+        if (aliensContador == 0) {
+            alienColunas = Math.min(alienColunas + 1, colunas / 2 - 2);
+            alienLinha = Math.min(alienLinha + 1, linhas - 6);
+            aliens.clear();
+            balaArray.clear();
+            criaAliens();
         }
 
     }
@@ -195,7 +220,14 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                 aliens.add(alien);
             }
         }
-        aliensDerrotados = aliens.size();
+        aliensContador = aliens.size();
+    }
+
+    public boolean detectarColisao(Bloco a, Bloco b) {
+        return a.x < b.x + b.largura &&
+                a.x + a.largura > b.x &&
+                a.y < b.y + b.altura &&
+                a.y + a.altura > b.y;
     }
 
     @Override
