@@ -60,9 +60,40 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     }
 
+    public class Bala extends Bloco {
+        public Bala(int x, int y, int largura, int altura, Image img) {
+            super(x, y, largura, altura, null);
+        }
+    }
+
+    public void atiraBala(TipoBala tipo) {
+        Bala bala;
+
+        switch (tipo) {
+            case NORMAL:
+                bala = new Bala(
+                        nave.x + naveLargura,
+                        nave.y + naveAltura / 2 - balaLargura / 6,
+                        balaAltura,
+                        balaLargura,
+                        null);
+                break;
+
+            default:
+                bala = new Bala(nave.x + naveLargura, nave.y, balaAltura, balaLargura, null);
+        }
+
+        balaArray.add(bala);
+    }
+
+    // declaração da nave
     Nave nave;
 
     // tiros
+    ArrayList<Bala> balaArray;
+    int balaLargura = tileSize / 2;
+    int balaAltura = tileSize / 8;
+    int balaVelocidadeX = +10; // velocidade de movimento do tiro
 
     Timer gameloop;
 
@@ -86,6 +117,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
         nave = new Nave(naveX, naveY, naveLargura, naveAltura, naveImg);
         aliens = new ArrayList<Alien>();
+        balaArray = new ArrayList<Bala>();
 
         // Temporizador do jogo
         gameloop = new Timer(1000 / 60, this);
@@ -96,6 +128,30 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         draw(g);
+
+    }
+
+    public void draw(Graphics g) {
+
+        // Desenha a nave
+        g.drawImage(nave.img, nave.x, nave.y, nave.largura, nave.altura, null);
+
+        // Desenha os inimigos
+        for (int i = 0; i < aliens.size(); i++) {
+            Alien alien = aliens.get(i);
+            if (alien.vivo) {
+                g.drawImage(alien.img, alien.x, alien.y, alien.largura, alien.altura, null);
+            }
+        }
+        // Desenha as balas
+        g.setColor(Color.red);
+        for (int i = 0; i < balaArray.size(); i++) {
+            Bala bala = balaArray.get(i);
+            if (!bala.used) {
+                g.fillRect(bala.x, bala.y, balaLargura, balaAltura);
+
+            }
+        }
 
     }
 
@@ -113,20 +169,13 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             }
 
         }
-    }
 
-    public void draw(Graphics g) {
-
-        // Desenha a nave
-        g.drawImage(nave.img, nave.x, nave.y, nave.largura, nave.altura, null);
-
-        // Desenha os inimigos
-        for (int i = 0; i < aliens.size(); i++) {
-            Alien alien = aliens.get(i);
-            if (alien.vivo) {
-                g.drawImage(alien.img, alien.x, alien.y, alien.largura, alien.altura, null);
-            }
+        // bala
+        for (int i = 0; i < balaArray.size(); i++) {
+            Bala bala = balaArray.get(i);
+            bala.x += balaVelocidadeX;
         }
+
     }
 
     public void criaAliens() {
@@ -137,8 +186,8 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             int espacamentoVertical = 30;
             for (int c = 0; c < alienColunas; c++) {
                 int indiceAleatorio = random.nextInt(alienImagemArray.size()); // um índice aleatório de uma imagem de
+                                                                               // // // // alien.
                 int posY = alienY + l * (alienAltura + espacamentoVertical) + random.nextInt(40);
-                // // // alien.
                 Alien alien = new Alien(alienX + c * (alienLargura + espacamentoHorizontal),
                         posY,
                         alienLargura, alienAltura,
@@ -224,6 +273,11 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             esquerda = false;
         }
+
+        else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            atiraBala(TipoBala.NORMAL);
+        }
+
     }
 
 }
