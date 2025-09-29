@@ -3,6 +3,7 @@ package entity;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 import javax.swing.*;
@@ -90,12 +91,14 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     Nave nave;
 
     // tiros
-    ArrayList<Bala> balaArray;
+    LinkedList<Bala> balaArray;
     int balaLargura = tileSize / 2;
     int balaAltura = tileSize / 8;
     int balaVelocidadeX = +10; // velocidade de movimento do tiro
 
     Timer gameloop;
+    int pontos = 0;
+    boolean fimDoJogo = false;
 
     SpaceCrusaders() {
         setPreferredSize(new Dimension(larguraQuadro, alturaQuadro));
@@ -117,7 +120,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
         nave = new Nave(naveX, naveY, naveLargura, naveAltura, naveImg);
         aliens = new ArrayList<Alien>();
-        balaArray = new ArrayList<Bala>();
+        balaArray = new LinkedList<Bala>();
 
         // Temporizador do jogo
         gameloop = new Timer(1000 / 60, this);
@@ -153,6 +156,15 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             }
         }
 
+        // pontuação
+        g.setColor(Color.green);
+        g.setFont(new Font("Arial", Font.PLAIN, 32));
+        if (fimDoJogo) {
+            g.drawString("Game Over " + String.valueOf(pontos), 10, 35);
+        } else {
+            g.drawString(String.valueOf(pontos), 10, 35);
+        }
+
     }
 
     public void movimento() {
@@ -182,18 +194,19 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                     bala.used = true;
                     alien.vivo = false;
                     aliensContador--;
-
+                    pontos += 100;
                 }
             }
 
         }
-        // limpar as balas usadas
-        while (balaArray.size() > 0 && (balaArray.get(0).used || balaArray.get(0).y < 0)) {
-            balaArray.remove(0);
+        // Lista encadeada aqui é mais otimizado do que arraylist,obrigado mestre artur
+        while (!balaArray.isEmpty() && (balaArray.getFirst().used || balaArray.getFirst().y < 0)) {
+            balaArray.removeFirst();
         }
 
         // nova horda
         if (aliensContador == 0) {
+            pontos += alienColunas * alienLinha * 100;
             alienColunas = Math.min(alienColunas + 1, colunas / 2 - 2);
             alienLinha = Math.min(alienLinha + 1, linhas - 6);
             aliens.clear();
