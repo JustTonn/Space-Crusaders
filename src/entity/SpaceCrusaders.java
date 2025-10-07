@@ -35,7 +35,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     // Inimigos
 
-    ArrayList<Alien> aliens;
+    ArrayList<AlienTemplate> aliens;
     int alienAltura = tileSize;
     int alienLargura = tileSize;
     int alienX = 1280 - tileSize;
@@ -47,7 +47,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     int pontosAlien = 1;
     int alienVelocidadeY = 1;
 
-    public class Nave extends Bloco {
+    public static class Nave extends Bloco {
         public Nave(int x, int y, int largura, int altura, Image img) {
             super(x, y, largura, altura, img);
         }
@@ -61,7 +61,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     }
 
-    public class Bala extends Bloco {
+    public static class Bala extends Bloco {
         public Bala(int x, int y, int largura, int altura, Image img) {
             super(x, y, largura, altura, null);
         }
@@ -140,7 +140,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         alienImagemArray.add(alienImg);
 
         nave = new Nave(naveX, naveY, naveLargura, naveAltura, naveImg);
-        aliens = new ArrayList<Alien>();
+        aliens = new ArrayList<AlienTemplate>();
         balaArray = new LinkedList<Bala>();
 
         // Temporizador do jogo
@@ -161,8 +161,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         g.drawImage(nave.img, nave.x, nave.y, nave.largura, nave.altura, null);
 
         // Desenha os inimigos
-        for (int i = 0; i < aliens.size(); i++) {
-            Alien alien = aliens.get(i);
+        for (AlienTemplate alien : aliens) {
             if (alien.vivo) {
                 g.drawImage(alien.img, alien.x, alien.y, alien.largura, alien.altura, null);
             }
@@ -197,22 +196,9 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     public void movimento() {
         // aliens
-        for (int i = 0; i < aliens.size(); i++) {
-            Alien alien = aliens.get(i);
-            if (alien.vivo) {
-                // Movimento horizontal em direção à nave
-                if (alien.x < nave.x) {
-                    alien.x += alienVelocidadeY;
-                } else if (alien.x > nave.x) {
-                    alien.x -= alienVelocidadeY;
-                }
-            }
-        }
-
-        Random rand = new Random();
-        for (Alien alien : aliens) {
-            if (alien.vivo && rand.nextDouble() < 0.01) { // 1% de chance
-                alienBala(alien, TipoBala.NORMAL);
+        for (AlienTemplate alien : aliens) {
+            if (alien.vivo()) {
+                alien.acaoDoAlien(nave, aliens, alienBalas);
             }
         }
 
@@ -222,8 +208,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             bala.x += balaVelocidadeX;
 
             // colisao dos tiros com os aliens
-            for (int j = 0; j < aliens.size(); j++) {
-                Alien alien = aliens.get(j);
+            for (AlienTemplate alien : aliens) {
                 if (!bala.used && alien.vivo && detectarColisao(bala, alien)) {
                     bala.used = true;
                     alien.vivo = false;
@@ -276,10 +261,9 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                 int indiceAleatorio = random.nextInt(alienImagemArray.size()); // um índice aleatório de uma imagem de
                                                                                // // // // alien.
                 int posY = alienY + l * (alienAltura + espacamentoVertical) + random.nextInt(40);
-                Alien alien = new Alien(alienX + c * (alienLargura + espacamentoHorizontal),
-                        posY,
-                        alienLargura, alienAltura,
-                        alienImagemArray.get(indiceAleatorio));
+                AlienTemplate alien;
+                alien = new AlienNormal(alienX + c * (alienLargura + espacamentoHorizontal),
+                        posY, alienLargura, alienAltura, alienImagemArray.get(indiceAleatorio), 1);
                 aliens.add(alien);
             }
         }
