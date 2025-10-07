@@ -54,13 +54,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     }
 
-    public class Alien extends Bloco {
-        public Alien(int x, int y, int largura, int altura, Image img) {
-            super(x, y, largura, altura, img);
-        }
-
-    }
-
     public static class Bala extends Bloco {
         public Bala(int x, int y, int largura, int altura, Image img) {
             super(x, y, largura, altura, null);
@@ -87,7 +80,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         balaArray.add(bala);
     }
 
-    public void alienBala(Alien alien, TipoBala tipo) {
+    public void alienBala(AlienTemplate alien, TipoBala tipo) {
         Bala bala;
 
         switch (tipo) {
