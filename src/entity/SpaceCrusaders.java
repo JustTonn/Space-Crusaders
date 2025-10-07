@@ -87,15 +87,36 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         balaArray.add(bala);
     }
 
+    public void alienBala(Alien alien, TipoBala tipo) {
+        Bala bala;
+
+        switch (tipo) {
+            case NORMAL:
+                bala = new Bala(
+                        alien.x - balaLargura,
+                        alien.y + alienAltura / 2 - balaAltura / 2,
+                        balaAltura,
+                        balaLargura,
+                        null);
+                break;
+
+            default:
+                bala = new Bala(nave.x + naveLargura, nave.y, balaAltura, balaLargura, null);
+        }
+
+        alienBalas.add(bala);
+    }
+
     // declaração da nave
     Nave nave;
 
     // tiros
     LinkedList<Bala> balaArray;
+    LinkedList<Bala> alienBalas = new LinkedList<>();
     int balaLargura = tileSize / 2;
     int balaAltura = tileSize / 8;
-    int balaVelocidadeX = +10; // velocidade de movimento do tiro
-
+    int balaVelocidadeX = +10; // velocidade de movimento do tiro do player
+    int balaVelocidadealien = -8; // velocidade de movimento do alien
     Timer gameloop;
     int pontos = 0;
     boolean fimDoJogo = false;
@@ -156,8 +177,15 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             }
         }
 
+        g.setColor(Color.cyan); // balas dos aliens azuis
+        for (Bala bala : alienBalas) {
+            if (!bala.used) {
+                g.fillRect(bala.x, bala.y, balaLargura, balaAltura);
+            }
+        }
+
         // pontuação
-        g.setColor(Color.green);
+        g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.PLAIN, 32));
         if (fimDoJogo) {
             g.drawString("Game Over " + String.valueOf(pontos), 10, 35);
@@ -179,7 +207,13 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                     alien.x -= alienVelocidadeY;
                 }
             }
+        }
 
+        Random rand = new Random();
+        for (Alien alien : aliens) {
+            if (alien.vivo && rand.nextDouble() < 0.01) { // 1% de chance
+                alienBala(alien, TipoBala.NORMAL);
+            }
         }
 
         // bala tiros
@@ -197,8 +231,24 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                     pontos += 100;
                 }
             }
-
         }
+
+        for (int i = 0; i < alienBalas.size(); i++) {
+            Bala bala = alienBalas.get(i);
+            bala.x += balaVelocidadealien;
+
+            // colisão com a nave
+            if (!bala.used && detectarColisao(bala, nave)) {
+                bala.used = true;
+                fimDoJogo = true; // nave atingida = game over
+            }
+        }
+
+        // limpar balas que saíram da tela
+        while (!alienBalas.isEmpty() && (alienBalas.getFirst().used || alienBalas.getFirst().x < 0)) {
+            alienBalas.removeFirst();
+        }
+
         // Lista encadeada aqui é mais otimizado do que arraylist,obrigado mestre artur
         while (!balaArray.isEmpty() && (balaArray.getFirst().used || balaArray.getFirst().y < 0)) {
             balaArray.removeFirst();
