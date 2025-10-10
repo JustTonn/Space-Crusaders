@@ -180,7 +180,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.PLAIN, 32));
         if (fimDoJogo) {
-            g.drawString("Game Over " + String.valueOf(pontos), 10, 35);
+            g.drawString("Game Over : " + String.valueOf(pontos), 10, 35);
         } else {
             g.drawString(String.valueOf(pontos), 10, 35);
         }
@@ -274,6 +274,9 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     public void actionPerformed(ActionEvent e) {
         movimento();
         repaint();
+        if (fimDoJogo) {
+            gameloop.stop();
+        }
     }
 
     @Override
@@ -333,6 +336,20 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     @Override
     public void keyReleased(KeyEvent e) {
+        if (fimDoJogo) {
+
+            alienLinha = 3;
+            alienColunas = 1;
+            nave.x = naveX;
+            balaArray.clear();
+            alienBalas.clear();
+            aliens.clear();
+            pontos = 0;
+            fimDoJogo = false;
+            criaAliens();
+            gameloop.start();
+        }
+
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             cima = false;
         }
