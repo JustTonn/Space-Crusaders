@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import javax.swing.Timer;
 
 import javax.swing.*;
 
@@ -113,6 +114,8 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     Timer gameloop;
     int pontos = 0;
     boolean fimDoJogo = false;
+    private Timer tiroTimer;
+    private int intervaloTiro = 1000; // milissegundos, pode ajustar depois
 
     SpaceCrusaders() {
         setPreferredSize(new Dimension(larguraQuadro, alturaQuadro));
@@ -140,6 +143,15 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         gameloop = new Timer(1000 / 60, this);
         criaAliens();
         gameloop.start();
+
+        // Automatizando o tiro
+
+        tiroTimer = new Timer(intervaloTiro, e -> atiraBala(TipoBala.NORMAL));
+        tiroTimer.start(); // começa atirando automaticamente
+    }
+
+    public void ajustarIntervaloTiro(int novoIntervalo) {
+        tiroTimer.setDelay(novoIntervalo);
     }
 
     public void paintComponent(Graphics g) {
@@ -227,7 +239,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             alienBalas.removeFirst();
         }
 
-        // Lista encadeada aqui é mais otimizado do que arraylist,obrigado mestre artur
+        // Lista encadeada aqui é mais otimizado do que arraylist,obrigado mestre arthur
         while (!balaArray.isEmpty() && (balaArray.getFirst().used || balaArray.getFirst().y < 0)) {
             balaArray.removeFirst();
         }
@@ -276,6 +288,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         repaint();
         if (fimDoJogo) {
             gameloop.stop();
+            tiroTimer.stop();
         }
     }
 
@@ -361,10 +374,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         }
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             esquerda = false;
-        }
-
-        else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            atiraBala(TipoBala.NORMAL);
         }
 
     }
