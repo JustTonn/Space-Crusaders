@@ -117,6 +117,10 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     private Timer tiroTimer;
     private int intervaloTiro = 1000; // milissegundos, pode ajustar depois
 
+    // lista de perks ?
+    private Perk[] perksDisponiveis;
+
+
     SpaceCrusaders() {
         setPreferredSize(new Dimension(larguraQuadro, alturaQuadro));
         setBackground(Color.BLACK);
@@ -197,6 +201,20 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             g.drawString(String.valueOf(pontos), 10, 35);
         }
 
+        // Escreve as opções de Perks
+
+        if (estado == EstadoDoJogo.SELECIONANDO_PERK) {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 36));
+            g.drawString("Escolha sua melhoria:", larguraQuadro / 2 - 200, alturaQuadro / 2 - 100);
+
+            g.setFont(new Font("Arial", Font.PLAIN, 28));
+            g.drawString("1 - " + perksDisponiveis[0].nome + " (" + perksDisponiveis[0].descricao + ")", larguraQuadro / 2 - 300, alturaQuadro / 2);
+            g.drawString("2 - " + perksDisponiveis[1].nome + " (" + perksDisponiveis[1].descricao + ")", larguraQuadro / 2 - 300, alturaQuadro / 2 + 60);
+            return; // não desenha o resto do jogo
+        }
+
+
     }
 
     public void movimento() {
@@ -242,6 +260,19 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         // Lista encadeada aqui é mais otimizado do que arraylist,obrigado mestre arthur
         while (!balaArray.isEmpty() && (balaArray.getFirst().used || balaArray.getFirst().y < 0)) {
             balaArray.removeFirst();
+        }
+
+        // Sistema de perks
+
+        if (aliensContador == 0 && estado == EstadoDoJogo.JOGANDO) {
+            estado = EstadoDoJogo.SELECIONANDO_PERK;
+            gameloop.stop(); // pausa o jogo
+
+            // gera duas opções de perk
+            perksDisponiveis = new Perk[]{
+                    new Perk("Tanque Extra", "Aumenta o combustível (ainda não implementado)", tipoPerk.MELHORAR_COMBUSTIVEL),
+                    new Perk("Fogo Rápido", "Diminui o intervalo entre tiros", tipoPerk.MELHORAR_TAXA_DE_TIRO)
+            };
         }
 
         // nova horda
@@ -291,6 +322,26 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             tiroTimer.stop();
         }
     }
+
+    // Funçao que aplica os perks
+    private void aplicarPerk(Perk perk) {
+        switch (perk.tipo) {
+            case MELHORAR_TAXA_DE_TIRO:
+                intervaloTiro = Math.max(100, intervaloTiro - 200); // reduz o intervalo, mas nunca abaixo de 200ms
+                tiroTimer.setDelay(intervaloTiro);
+                break;
+
+            case MELHORAR_COMBUSTIVEL:
+                // aqui futuramente adicionaremos lógica de combustível
+                break;
+        }
+
+        // retorna ao jogo
+        estado = EstadoDoJogo.JOGANDO;
+        criaAliens();
+        gameloop.start();
+    }
+
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -343,6 +394,16 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         }
         if (esquerda && nave.x - naveVelocidadeY >= 0) {
             nave.x -= 3;
+        }
+
+        // Mais coisas de perks
+
+        if (estado == EstadoDoJogo.SELECIONANDO_PERK) {
+            if (e.getKeyCode() == KeyEvent.VK_1) {
+                aplicarPerk(perksDisponiveis[0]);
+            } else if (e.getKeyCode() == KeyEvent.VK_2) {
+                aplicarPerk(perksDisponiveis[1]);
+            }
         }
 
     }
