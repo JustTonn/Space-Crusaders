@@ -34,6 +34,12 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     int naveLargura = tileSize * 2;
     int naveVelocidadeY = 3;
 
+    // Combustível
+    private int combustivelMax = 20;      // combustível total em segundos
+    private double combustivelAtual = combustivelMax;
+    private long ultimoTempoCombustivel;  // controle para decrementar 1s por segundo
+
+
     // Inimigos
 
     ArrayList<AlienTemplate> aliens;
@@ -143,6 +149,12 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         aliens = new ArrayList<AlienTemplate>();
         balaArray = new LinkedList<Bala>();
 
+        // sistema de combustível
+        combustivelAtual = combustivelMax;
+        ultimoTempoCombustivel = System.currentTimeMillis();
+
+
+
         // Temporizador do jogo
         gameloop = new Timer(1000 / 60, this);
         criaAliens();
@@ -214,6 +226,14 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             return; // não desenha o resto do jogo
         }
 
+        // Mostra o tempo de combustível
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        String textoCombustivel = "Combustível: " + (int) combustivelAtual + "s";
+        int textoLargura = g.getFontMetrics().stringWidth(textoCombustivel);
+        g.drawString(textoCombustivel, larguraQuadro - textoLargura - 20, 30);
+
 
     }
 
@@ -224,6 +244,24 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                 alien.acaoDoAlien(nave, aliens, alienBalas);
             }
         }
+
+        // Sistema de combustível - parte que atualiza o combustível
+
+        if (estado == EstadoDoJogo.JOGANDO) {
+            long agora = System.currentTimeMillis();
+            if (agora - ultimoTempoCombustivel >= 1000) { // passou 1 segundo
+                combustivelAtual -= 1;
+                ultimoTempoCombustivel = agora;
+
+                if (combustivelAtual <= 0) {
+                    combustivelAtual = 0;
+                    estado = EstadoDoJogo.FIM_DE_JOGO;
+                    gameloop.stop();
+                    //tiroTimer.stop();
+                }
+            }
+        }
+
 
         // bala tiros
         for (int i = 0; i < balaArray.size(); i++) {
@@ -319,7 +357,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         repaint();
         if (fimDoJogo) {
             gameloop.stop();
-            tiroTimer.stop();
         }
     }
 
@@ -327,18 +364,20 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     private void aplicarPerk(Perk perk) {
         switch (perk.tipo) {
             case MELHORAR_TAXA_DE_TIRO:
-                intervaloTiro = Math.max(100, intervaloTiro - 200); // reduz o intervalo, mas nunca abaixo de 200ms
+                intervaloTiro = Math.max(100, intervaloTiro - 200); // reduz o intervalo, mas nunca abaixo de 100ms
                 tiroTimer.setDelay(intervaloTiro);
                 break;
 
             case MELHORAR_COMBUSTIVEL:
-                // aqui futuramente adicionaremos lógica de combustível
+                // Recarrega combustível entre hordas
+                combustivelAtual = combustivelMax;
+                ultimoTempoCombustivel = System.currentTimeMillis();
+
                 break;
         }
 
         // retorna ao jogo
         estado = EstadoDoJogo.JOGANDO;
-        criaAliens();
         gameloop.start();
     }
 
