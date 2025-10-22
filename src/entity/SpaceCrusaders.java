@@ -9,9 +9,10 @@ import javax.swing.Timer;
 
 import javax.swing.*;
 
-public class SpaceCrusaders extends JPanel implements ActionListener, KeyListener {
+public class SpaceCrusaders extends JPanel implements ActionListener, KeyListener, MouseListener {
 
-    private EstadoDoJogo estado = EstadoDoJogo.JOGANDO; // gerencia o estado do jogo.
+    //primeira mudança para a adição do menu - lembrar que começou aqui.
+    private EstadoDoJogo estado = EstadoDoJogo.MENU; // gerencia o estado do jogo.
 
     int tileSize = 64; // tamanho de cada quadradinho da tela.
     int colunas = 20; // quantos quadradinhos tem na vertical.
@@ -53,6 +54,45 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     int aliensContador;
     int pontosAlien = 1;
     int alienVelocidadeY = 1;
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (estado == EstadoDoJogo.MENU) {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+
+            // área do botão
+            int botaoX = larguraQuadro / 2 - 100;
+            int botaoY = alturaQuadro / 2 - 40;
+            int botaoLargura = 200;
+            int botaoAltura = 80;
+
+            if (mouseX >= botaoX && mouseX <= botaoX + botaoLargura &&
+                    mouseY >= botaoY && mouseY <= botaoY + botaoAltura) {
+                iniciarJogo();
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
 
     public static class Nave extends Bloco {
         public Nave(int x, int y, int largura, int altura, Image img) {
@@ -132,6 +172,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         setBackground(Color.BLACK);
         setFocusable(true); // foca na tela do jogo
         addKeyListener(this); // pega o evento das teclas
+        addMouseListener(this); // pega o evento do mouse
 
         naveImg = new ImageIcon(getClass().getResource("/imgs/ship.png")).getImage();
         alienImg = new ImageIcon(getClass().getResource("/imgs/alien.png")).getImage();
@@ -170,6 +211,14 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         tiroTimer.setDelay(novoIntervalo);
     }
 
+    private void iniciarJogo() {
+        estado = EstadoDoJogo.JOGANDO;
+        combustivelAtual = combustivelMax;
+       /* inimigos.clear();
+        tiros.clear();*/
+        criaAliens();
+    }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         draw(g);
@@ -177,6 +226,35 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     }
 
     public void draw(Graphics g) {
+
+        //Menu inicial
+
+        if (estado == EstadoDoJogo.MENU) {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, larguraQuadro, alturaQuadro);
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 48));
+            g.drawString("🚀 SPACE ROGUELIKE", larguraQuadro / 2 - 250, alturaQuadro / 2 - 100);
+
+            // botão iniciar
+            int botaoX = larguraQuadro / 2 - 100;
+            int botaoY = alturaQuadro / 2 - 40;
+            int botaoLargura = 200;
+            int botaoAltura = 80;
+
+            g.setColor(Color.DARK_GRAY);
+            g.fillRect(botaoX, botaoY, botaoLargura, botaoAltura);
+
+            g.setColor(Color.WHITE);
+            g.drawRect(botaoX, botaoY, botaoLargura, botaoAltura);
+
+            g.setFont(new Font("Arial", Font.BOLD, 28));
+            g.drawString("INICIAR", botaoX + 45, botaoY + 50);
+
+            return;
+        }
+
 
         // Desenha a nave
         g.drawImage(nave.img, nave.x, nave.y, nave.largura, nave.altura, null);
@@ -234,6 +312,32 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         int textoLargura = g.getFontMetrics().stringWidth(textoCombustivel);
         g.drawString(textoCombustivel, larguraQuadro - textoLargura - 20, 30);
 
+        // Combustível barrinha
+
+        int barraLarguraMax = 200;
+        int barraAltura = 20;
+        int barraX = larguraQuadro - barraLarguraMax - 20;
+        int barraY = 40;
+
+        // calcula a proporção de combustível
+
+        double proporcao = combustivelAtual / combustivelMax;
+        int barraLarguraAtual = (int) (barraLarguraMax * proporcao);
+
+        // cor da barra
+        Color corBarra;
+        if (proporcao > 0.5)
+            corBarra = Color.GREEN;
+        else if (proporcao > 0.25)
+            corBarra = Color.YELLOW;
+        else
+            corBarra = Color.RED;
+
+        g.setColor(Color.GRAY);
+        g.drawRect(barraX, barraY, barraLarguraMax, barraAltura);
+        g.setColor(corBarra);
+        g.fillRect(barraX + 1, barraY + 1, barraLarguraAtual - 2, barraAltura - 2);
+
 
     }
 
@@ -257,11 +361,9 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                     combustivelAtual = 0;
                     estado = EstadoDoJogo.FIM_DE_JOGO;
                     gameloop.stop();
-                    //tiroTimer.stop();
                 }
             }
         }
-
 
         // bala tiros
         for (int i = 0; i < balaArray.size(); i++) {
@@ -370,7 +472,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
             case MELHORAR_COMBUSTIVEL:
                 // Recarrega combustível entre hordas
-                combustivelAtual = combustivelMax;
+                combustivelAtual += combustivelMax;
                 ultimoTempoCombustivel = System.currentTimeMillis();
 
                 break;
