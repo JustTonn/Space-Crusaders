@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
-import javax.swing.Timer;
 
 import javax.swing.*;
 
@@ -36,7 +35,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     int naveVelocidadeY = 3;
 
     // Combustível
-    private int combustivelMax = 20; // combustível total em segundos
+    private int combustivelMax = 30; // combustível total em segundos
     private double combustivelAtual = combustivelMax;
     private long ultimoTempoCombustivel; // controle para decrementar 1s por segundo
 
@@ -340,6 +339,8 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                     combustivelAtual = 0;
                     estado = EstadoDoJogo.FIM_DE_JOGO;
                     gameloop.stop();
+                    tiroTimer.stop();
+                    EfeitosSonoros.tocarMusica("/som/background.wav", false);
                 }
             }
         }
@@ -386,6 +387,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         if (aliensContador == 0 && estado == EstadoDoJogo.JOGANDO) {
             estado = EstadoDoJogo.SELECIONANDO_PERK;
             gameloop.stop(); // pausa o jogo
+            tiroTimer.stop();
 
             // gera duas opções de perk
             perksDisponiveis = new Perk[] {
@@ -435,10 +437,14 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         movimento();
         repaint();
+
         if (fimDoJogo) {
             gameloop.stop();
+            tiroTimer.stop();
+            EfeitosSonoros.tocarMusica("/som/background.wav", false);
         }
     }
 
@@ -461,6 +467,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         // retorna ao jogo
         estado = EstadoDoJogo.JOGANDO;
         gameloop.start();
+        tiroTimer.start();
         EfeitosSonoros.tocarMusica("/som/background.wav", true);
     }
 
@@ -543,7 +550,10 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             fimDoJogo = false;
             criaAliens();
             gameloop.start();
-            EfeitosSonoros.tocarMusica("/som/background.wav", true);
+            intervaloTiro = 1000;
+            tiroTimer.setDelay(intervaloTiro);
+            tiroTimer.start();
+            combustivelAtual = combustivelMax;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
