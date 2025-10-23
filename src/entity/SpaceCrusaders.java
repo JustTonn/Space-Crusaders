@@ -174,15 +174,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         ultimoTempoCombustivel = System.currentTimeMillis();
 
         // Temporizador do jogo
-        gameloop = new Timer(1000 / 60, this);
-        criaAliens();
-        gameloop.start();
-        EfeitosSonoros.tocarMusica("/som/background.wav", true);
 
-        // Automatizando o tiro
-
-        tiroTimer = new Timer(intervaloTiro, e -> atiraBala(TipoBala.NORMAL));
-        tiroTimer.start(); // começa atirando automaticamente
     }
 
     public void ajustarIntervaloTiro(int novoIntervalo) {
@@ -197,6 +189,13 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
          * tiros.clear();
          */
         criaAliens();
+        gameloop = new Timer(1000 / 60, this);
+        gameloop.start();
+        EfeitosSonoros.tocarMusica("/som/background.wav", true);
+        // Automatizando o tiro
+
+        tiroTimer = new Timer(intervaloTiro, e -> atiraBala(TipoBala.NORMAL));
+        tiroTimer.start(); // começa atirando automaticamente
     }
 
     public void paintComponent(Graphics g) {
@@ -215,7 +214,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 48));
-            g.drawString("🚀 SPACE ROGUELIKE", larguraQuadro / 2 - 250, alturaQuadro / 2 - 100);
+            g.drawString("🚀 SPACE CRUSADERS", larguraQuadro / 2 - 250, alturaQuadro / 2 - 100);
 
             // botão iniciar
             int botaoX = larguraQuadro / 2 - 100;
