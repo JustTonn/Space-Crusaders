@@ -191,7 +191,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         gameloop = new Timer(1000 / 60, this);
         gameloop.start();
         EfeitosSonoros.tocarMusica("/som/background.wav", true);
-        // Automatizando o tiro
 
         tiroTimer = new Timer(intervaloTiro, e -> atiraBala(TipoBala.NORMAL));
         tiroTimer.start(); // começa atirando automaticamente
@@ -340,7 +339,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                     estado = EstadoDoJogo.FIM_DE_JOGO;
                     gameloop.stop();
                     tiroTimer.stop();
-                    EfeitosSonoros.tocarMusica("/som/background.wav", false);
+                    EfeitosSonoros.pararMusica();
                 }
             }
         }
@@ -444,7 +443,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         if (fimDoJogo) {
             gameloop.stop();
             tiroTimer.stop();
-            EfeitosSonoros.tocarMusica("/som/background.wav", false);
+            EfeitosSonoros.pararMusica();
         }
     }
 
@@ -554,6 +553,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             tiroTimer.setDelay(intervaloTiro);
             tiroTimer.start();
             combustivelAtual = combustivelMax;
+            EfeitosSonoros.tocarMusica("/som/background.wav", true);
         }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {

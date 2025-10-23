@@ -2,14 +2,12 @@ package entity;
 
 import java.io.IOException;
 import java.net.URL;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 
 public class EfeitosSonoros {
+
+    private static Clip musicaAtual; // guarda a música de fundo atual
+
     public static void tocarEfeito(String caminho) {
         try {
             URL url = EfeitosSonoros.class.getResource(caminho);
@@ -27,6 +25,7 @@ public class EfeitosSonoros {
     }
 
     public static void tocarMusica(String caminho, boolean loop) {
+        pararMusica(); // para a música anterior, se houver
         new Thread(() -> {
             try {
                 URL url = EfeitosSonoros.class.getResource(caminho);
@@ -35,14 +34,22 @@ public class EfeitosSonoros {
                     return;
                 }
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(url);
-                Clip clip = AudioSystem.getClip();
-                clip.open(audioStream);
+                musicaAtual = AudioSystem.getClip();
+                musicaAtual.open(audioStream);
                 if (loop)
-                    clip.loop(Clip.LOOP_CONTINUOUSLY);
-                clip.start();
+                    musicaAtual.loop(Clip.LOOP_CONTINUOUSLY);
+                musicaAtual.start();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    public static void pararMusica() {
+        if (musicaAtual != null && musicaAtual.isRunning()) {
+            musicaAtual.stop();
+            musicaAtual.close();
+            musicaAtual = null;
+        }
     }
 }
