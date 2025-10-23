@@ -6,7 +6,7 @@ import javax.sound.sampled.*;
 
 public class EfeitosSonoros {
 
-    private static Clip musicaAtual; // guarda a música de fundo atual
+    private static Clip musicaAtual; // armazena a musica que esta tocando aqui
 
     public static void tocarEfeito(String caminho) {
         try {
@@ -25,7 +25,7 @@ public class EfeitosSonoros {
     }
 
     public static void tocarMusica(String caminho, boolean loop) {
-        pararMusica(); // para a música anterior, se houver
+        pararMusica();
         new Thread(() -> {
             try {
                 URL url = EfeitosSonoros.class.getResource(caminho);

@@ -35,7 +35,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     int naveVelocidadeY = 3;
 
     // Combustível
-    private int combustivelMax = 30; // combustível total em segundos
+    private int combustivelMax = 20; // combustível total em segundos
     private double combustivelAtual = combustivelMax;
     private long ultimoTempoCombustivel; // controle para decrementar 1s por segundo
 
@@ -336,7 +336,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
                 if (combustivelAtual <= 0) {
                     combustivelAtual = 0;
-                    estado = EstadoDoJogo.FIM_DE_JOGO;
+                    fimDoJogo = true;
                     gameloop.stop();
                     tiroTimer.stop();
                     EfeitosSonoros.pararMusica();
@@ -390,7 +390,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
             // gera duas opções de perk
             perksDisponiveis = new Perk[] {
-                    new Perk("Tanque Extra", "Aumenta o combustível (ainda não implementado)",
+                    new Perk("Tanque Extra", "Aumenta o combustível",
                             tipoPerk.MELHORAR_COMBUSTIVEL),
                     new Perk("Fogo Rápido", "Diminui o intervalo entre tiros", tipoPerk.MELHORAR_TAXA_DE_TIRO)
             };
