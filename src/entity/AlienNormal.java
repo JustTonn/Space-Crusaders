@@ -29,6 +29,7 @@ public class AlienNormal extends AlienTemplate {
                     4,
                     null);
             balas.add(bala);
+            EfeitosSonoros.tocarEfeito("/som/ataque-aliens.wav");
         }
     }
 }

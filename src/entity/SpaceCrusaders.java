@@ -127,26 +127,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         EfeitosSonoros.tocarEfeito("/som/ataque-nave.wav");
     }
 
-    public void alienBala(AlienTemplate alien, TipoBala tipo) {
-        Bala bala;
-
-        switch (tipo) {
-            case NORMAL:
-                bala = new Bala(
-                        alien.x - balaLargura,
-                        alien.y + alienAltura / 2 - balaAltura / 2,
-                        balaAltura,
-                        balaLargura,
-                        null);
-                break;
-
-            default:
-                bala = new Bala(nave.x + naveLargura, nave.y, balaAltura, balaLargura, null);
-        }
-
-        alienBalas.add(bala);
-    }
-
     // declaração da nave
     Nave nave;
 
