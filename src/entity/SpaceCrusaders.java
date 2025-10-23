@@ -11,7 +11,7 @@ import javax.swing.*;
 
 public class SpaceCrusaders extends JPanel implements ActionListener, KeyListener, MouseListener {
 
-    //primeira mudança para a adição do menu - lembrar que começou aqui.
+    // primeira mudança para a adição do menu - lembrar que começou aqui.
     private EstadoDoJogo estado = EstadoDoJogo.MENU; // gerencia o estado do jogo.
 
     int tileSize = 64; // tamanho de cada quadradinho da tela.
@@ -36,10 +36,9 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     int naveVelocidadeY = 3;
 
     // Combustível
-    private int combustivelMax = 20;      // combustível total em segundos
+    private int combustivelMax = 20; // combustível total em segundos
     private double combustivelAtual = combustivelMax;
-    private long ultimoTempoCombustivel;  // controle para decrementar 1s por segundo
-
+    private long ultimoTempoCombustivel; // controle para decrementar 1s por segundo
 
     // Inimigos
 
@@ -125,6 +124,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         }
 
         balaArray.add(bala);
+        EfeitosSonoros.tocarEfeito("/som/ataque-nave.wav");
     }
 
     public void alienBala(AlienTemplate alien, TipoBala tipo) {
@@ -166,7 +166,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     // lista de perks ?
     private Perk[] perksDisponiveis;
 
-
     SpaceCrusaders() {
         setPreferredSize(new Dimension(larguraQuadro, alturaQuadro));
         setBackground(Color.BLACK);
@@ -194,8 +193,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         combustivelAtual = combustivelMax;
         ultimoTempoCombustivel = System.currentTimeMillis();
 
-
-
         // Temporizador do jogo
         gameloop = new Timer(1000 / 60, this);
         criaAliens();
@@ -214,8 +211,10 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     private void iniciarJogo() {
         estado = EstadoDoJogo.JOGANDO;
         combustivelAtual = combustivelMax;
-       /* inimigos.clear();
-        tiros.clear();*/
+        /*
+         * inimigos.clear();
+         * tiros.clear();
+         */
         criaAliens();
     }
 
@@ -227,7 +226,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     public void draw(Graphics g) {
 
-        //Menu inicial
+        // Menu inicial
 
         if (estado == EstadoDoJogo.MENU) {
             g.setColor(Color.BLACK);
@@ -254,7 +253,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
             return;
         }
-
 
         // Desenha a nave
         g.drawImage(nave.img, nave.x, nave.y, nave.largura, nave.altura, null);
@@ -299,8 +297,10 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             g.drawString("Escolha sua melhoria:", larguraQuadro / 2 - 200, alturaQuadro / 2 - 100);
 
             g.setFont(new Font("Arial", Font.PLAIN, 28));
-            g.drawString("1 - " + perksDisponiveis[0].nome + " (" + perksDisponiveis[0].descricao + ")", larguraQuadro / 2 - 300, alturaQuadro / 2);
-            g.drawString("2 - " + perksDisponiveis[1].nome + " (" + perksDisponiveis[1].descricao + ")", larguraQuadro / 2 - 300, alturaQuadro / 2 + 60);
+            g.drawString("1 - " + perksDisponiveis[0].nome + " (" + perksDisponiveis[0].descricao + ")",
+                    larguraQuadro / 2 - 300, alturaQuadro / 2);
+            g.drawString("2 - " + perksDisponiveis[1].nome + " (" + perksDisponiveis[1].descricao + ")",
+                    larguraQuadro / 2 - 300, alturaQuadro / 2 + 60);
             return; // não desenha o resto do jogo
         }
 
@@ -337,7 +337,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         g.drawRect(barraX, barraY, barraLarguraMax, barraAltura);
         g.setColor(corBarra);
         g.fillRect(barraX + 1, barraY + 1, barraLarguraAtual - 2, barraAltura - 2);
-
 
     }
 
@@ -409,8 +408,9 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
             gameloop.stop(); // pausa o jogo
 
             // gera duas opções de perk
-            perksDisponiveis = new Perk[]{
-                    new Perk("Tanque Extra", "Aumenta o combustível (ainda não implementado)", tipoPerk.MELHORAR_COMBUSTIVEL),
+            perksDisponiveis = new Perk[] {
+                    new Perk("Tanque Extra", "Aumenta o combustível (ainda não implementado)",
+                            tipoPerk.MELHORAR_COMBUSTIVEL),
                     new Perk("Fogo Rápido", "Diminui o intervalo entre tiros", tipoPerk.MELHORAR_TAXA_DE_TIRO)
             };
         }
@@ -482,7 +482,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         estado = EstadoDoJogo.JOGANDO;
         gameloop.start();
     }
-
 
     @Override
     public void keyTyped(KeyEvent e) {
