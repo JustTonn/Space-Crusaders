@@ -301,6 +301,8 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
         double proporcao = combustivelAtual / combustivelMax;
         int barraLarguraAtual = (int) (barraLarguraMax * proporcao);
+        if (proporcao > 1.0)
+            proporcao = 1.0;
 
         // cor da barra
         Color corBarra;
