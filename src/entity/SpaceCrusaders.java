@@ -5,6 +5,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.List;
+
 
 import javax.swing.*;
 
@@ -130,6 +132,10 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     // declaração da nave
     Nave nave;
 
+    //Sistema de Ranking
+
+    private RankingManager rankingManager = new RankingManager();
+
     // tiros
     LinkedList<Bala> balaArray;
     LinkedList<Bala> alienBalas = new LinkedList<>();
@@ -152,6 +158,10 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         setFocusable(true); // foca na tela do jogo
         addKeyListener(this); // pega o evento das teclas
         addMouseListener(this); // pega o evento do mouse
+
+        // Sistema de Ranking
+
+
 
         naveImg = new ImageIcon(getClass().getResource("/imgs/ship.png")).getImage();
         alienImg = new ImageIcon(getClass().getResource("/imgs/alien.png")).getImage();
@@ -229,6 +239,18 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
             g.setFont(new Font("Arial", Font.BOLD, 28));
             g.drawString("INICIAR", botaoX + 45, botaoY + 50);
+
+            // Mostrar o ranking
+            g.setFont(new Font("Arial", Font.BOLD, 28));
+            g.drawString("🏆 Ranking:", larguraQuadro / 2 - 80, alturaQuadro / 2 + 80);
+
+            g.setFont(new Font("Arial", Font.PLAIN, 24));
+            List<Integer> pontuacoes = rankingManager.getPontuacoes();
+            for (int i = 0; i < pontuacoes.size(); i++) {
+                g.drawString((i + 1) + "º - " + pontuacoes.get(i) + " pontos",
+                        larguraQuadro / 2 - 80, alturaQuadro / 2 + 120 + i * 30);
+            }
+
 
             return;
         }
@@ -446,6 +468,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         repaint();
 
         if (fimDoJogo) {
+            rankingManager.adicionarPontuacao(pontos);
             gameloop.stop();
             tiroTimer.stop();
             audio.pararMusica();
