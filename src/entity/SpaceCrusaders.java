@@ -159,10 +159,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         addKeyListener(this); // pega o evento das teclas
         addMouseListener(this); // pega o evento do mouse
 
-        // Sistema de Ranking
-
-
-
         naveImg = new ImageIcon(getClass().getResource("/imgs/ship.png")).getImage();
         alienImg = new ImageIcon(getClass().getResource("/imgs/alien.png")).getImage();
         alienCyanImg = new ImageIcon(getClass().getResource("/imgs/alien-cyan.png")).getImage();
@@ -223,7 +219,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 48));
-            g.drawString("🚀 SPACE CRUSADERS", larguraQuadro / 2 - 250, alturaQuadro / 2 - 100);
+            g.drawString("SPACE CRUSADERS", larguraQuadro / 2 - 250, alturaQuadro / 2 - 100);
 
             // botão iniciar
             int botaoX = larguraQuadro / 2 - 100;
@@ -242,7 +238,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
             // Mostrar o ranking
             g.setFont(new Font("Arial", Font.BOLD, 28));
-            g.drawString("🏆 Ranking:", larguraQuadro / 2 - 80, alturaQuadro / 2 + 80);
+            g.drawString("Melhores pontuações:", larguraQuadro / 2 - 80, alturaQuadro / 2 + 80);
 
             g.setFont(new Font("Arial", Font.PLAIN, 24));
             List<Integer> pontuacoes = rankingManager.getPontuacoes();
