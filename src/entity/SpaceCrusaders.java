@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.List;
 
-
 import javax.swing.*;
 
 public class SpaceCrusaders extends JPanel implements ActionListener, KeyListener, MouseListener {
@@ -132,7 +131,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
     // declaração da nave
     Nave nave;
 
-    //Sistema de Ranking
+    // Sistema de Ranking
 
     private RankingManager rankingManager = new RankingManager();
 
@@ -238,7 +237,7 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
             // Mostrar o ranking
             g.setFont(new Font("Arial", Font.BOLD, 28));
-            g.drawString("Melhores pontuações:", larguraQuadro / 2 - 80, alturaQuadro / 2 + 80);
+            g.drawString("Melhores pontuações:", larguraQuadro / 2 - 145, alturaQuadro / 2 + 80);
 
             g.setFont(new Font("Arial", Font.PLAIN, 24));
             List<Integer> pontuacoes = rankingManager.getPontuacoes();
@@ -246,7 +245,6 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
                 g.drawString((i + 1) + "º - " + pontuacoes.get(i) + " pontos",
                         larguraQuadro / 2 - 80, alturaQuadro / 2 + 120 + i * 30);
             }
-
 
             return;
         }
