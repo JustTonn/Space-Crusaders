@@ -186,6 +186,32 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
         tiroTimer.setDelay(novoIntervalo);
     }
 
+    private void voltarAoMenu() {
+        if (gameloop != null)
+            gameloop.stop();
+        if (tiroTimer != null)
+            tiroTimer.stop();
+
+        audio.pararMusica();
+
+        if (pontos > 0) {
+            rankingManager.adicionarPontuacao(pontos);
+        }
+
+        estado = EstadoDoJogo.MENU;
+
+        aliens.clear();
+        balaArray.clear();
+        alienBalas.clear();
+
+        pontos = 0;
+        fimDoJogo = false;
+        combustivelAtual = combustivelMax;
+        intervaloTiro = 1000;
+
+        repaint();
+    }
+
     private void iniciarJogo() {
         estado = EstadoDoJogo.JOGANDO;
         combustivelAtual = combustivelMax;
@@ -506,6 +532,13 @@ public class SpaceCrusaders extends JPanel implements ActionListener, KeyListene
 
     @Override
     public void keyPressed(KeyEvent e) {
+
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            if (estado == EstadoDoJogo.JOGANDO || estado == EstadoDoJogo.SELECIONANDO_PERK) {
+                voltarAoMenu();
+            }
+            return;
+        }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             cima = true;
